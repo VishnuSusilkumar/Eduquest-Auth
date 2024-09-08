@@ -9,7 +9,11 @@ export class AuthController {
       if (!decode) {
         throw new Error("Invalid Token");
       }
-      return { userId: decode.id, role: decode.role };
+      return {
+        userId: decode.id,
+        role: decode.role,
+        isBlocked: decode.isBlocked,
+      };
     } catch (e: any) {
       throw new Error(e);
     }
@@ -25,14 +29,14 @@ export class AuthController {
         throw new Error("Invalid Token");
       }
       const refreshToken = jwt.sign(
-        { id: decode.id, role: decode.role },
+        { id: decode.id, role: decode.role, isBlocked: decode.isBlocked },
         process.env.REFRESH_TOKEN as Secret,
         {
           expiresIn: "5m",
         }
       );
       const accessToken = jwt.sign(
-        { id: decode.id, role: decode.role },
+        { id: decode.id, role: decode.role, isBlocked: decode.isBlocked },
         process.env.ACCESS_TOKEN as Secret,
         {
           expiresIn: "3d",
