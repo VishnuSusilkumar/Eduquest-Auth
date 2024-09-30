@@ -4,7 +4,7 @@ import "dotenv/config";
 export class AuthController {
   async isAuthenticated(data: { token: string }) {
     try {
-      const token = data.token || "";
+      const token = data.token;
       const decode: any = jwt.verify(token, process.env.ACCESS_TOKEN as Secret);
       if (!decode) {
         throw new Error("Invalid Token");
@@ -12,7 +12,6 @@ export class AuthController {
       return {
         userId: decode.id,
         role: decode.role,
-        isBlocked: decode.isBlocked,
       };
     } catch (e: any) {
       throw new Error(e);
@@ -29,14 +28,14 @@ export class AuthController {
         throw new Error("Invalid Token");
       }
       const refreshToken = jwt.sign(
-        { id: decode.id, role: decode.role, isBlocked: decode.isBlocked },
+        { id: decode.id, role: decode.role },
         process.env.REFRESH_TOKEN as Secret,
         {
           expiresIn: "5m",
         }
       );
       const accessToken = jwt.sign(
-        { id: decode.id, role: decode.role, isBlocked: decode.isBlocked },
+        { id: decode.id, role: decode.role },
         process.env.ACCESS_TOKEN as Secret,
         {
           expiresIn: "3d",
